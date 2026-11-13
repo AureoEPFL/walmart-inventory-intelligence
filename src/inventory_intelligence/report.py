@@ -50,7 +50,7 @@ def write_report(path,metrics,policies,rows,forecasts,traces,recommendations,man
 ## Paired differences versus seasonal_mean
 
 {comparisons.to_csv(index=False)}
-## Interview angles
+## Operational interpretation
 
 1. Compare seasonal_risk and ml_risk at similar service levels, not just mean forecast error.
 2. Inspect interval coverage by horizon; calibration is measured, not presumed.

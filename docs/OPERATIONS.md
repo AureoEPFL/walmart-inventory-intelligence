@@ -8,7 +8,7 @@ An inventory planner answers: which items require attention, how much should we 
 4. Subtract inventory position (on hand + outstanding orders). Check capacity and round to purchase packs.
 5. Escalate a risk that an ordinary order cannot solve: expedite with procurement, substitute with commercial teams, or reallocate between warehouses. These options are not implemented in the current simulator.
 
-## Use an observed stock snapshot
+## Inventory snapshot interface
 
 Create a CSV with one row per selected series and columns `series,onhand,pipeline,capacity`. Use the identifiers in a run's `selected_series.csv`. Quantities must be nonnegative; capacity must cover current on-hand plus reserved pipeline. Pipeline is assumed confirmed; its individual arrival dates are not represented in this snapshot recommendation.
 
@@ -18,7 +18,7 @@ Create a CSV with one row per selected series and columns `series,onhand,pipelin
 
 The tool reloads saved models and outputs a capacity-constrained ML safety-stock order. It refuses mismatched series. It does not place orders or modify stock. The remaining exposure before deliveries requires arrival-date-aware scheduling beyond this snapshot tool.
 
-## Useful interview questions
+## Operational research questions
 
 - Does better average forecast accuracy actually lower inventory cost?
 - How much additional service do we buy with safety stock?

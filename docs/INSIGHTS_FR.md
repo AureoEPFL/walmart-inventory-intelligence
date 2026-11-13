@@ -17,10 +17,6 @@ Résultats mesurés sur 64 références M5 du magasin CA_1, 84 jours de test et 
 
 **4. Un intervalle doit être vérifié.** À 12 jours, l'intervalle nominal à 80 % couvre 82,5 % des observations pour le ML contre 67,6 % pour la référence saisonnière. Il est plus large : cette protection supplémentaire a un coût. La calibration temporelle ne garantit pas la couverture future.
 
-## Présentation en entretien
+## Portée de l'étude
 
-« J'ai développé un pipeline de prévision probabiliste et de simulation de réapprovisionnement sur les ventes M5. J'ai séparé entraînement, réglage, calibration et test chronologique, puis comparé quatre politiques avec les mêmes tirages de délais fournisseurs. Le projet montre comment le coût des ruptures et le stock de sécurité changent une recommandation de commande. »
-
-Pour le CV : **Developed a reproducible probabilistic demand-forecasting and inventory simulation pipeline on M5 retail sales; benchmarked four replenishment policies under stochastic supplier lead times, capacity constraints and lost-sales costs.**
-
-Ne pas présenter ces résultats comme des économies réalisées chez Walmart, TotalEnergies ou un client. Le notebook Kaggle permet d'élargir l'expérience ; sa configuration de 512 références n'a pas été exécutée lors du premier essai local.
+Ce projet personnel étudie les décisions de réapprovisionnement à partir de ventes historiques Walmart. Les résultats sont conditionnels au magasin, à la période et aux hypothèses de simulation. Ils ne représentent pas des économies réalisées chez Walmart. La configuration Kaggle de 512 références définit une extension possible ; elle n'a pas été exécutée pour cet essai.

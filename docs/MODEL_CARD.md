@@ -1,6 +1,6 @@
 # Model card
 
-**Status:** research / portfolio prototype. Actual measured results are generated per run in `SUMMARY.md`, `forecast_metrics.csv` and `policy_metrics.csv`. No production-grade performance claim.
+**Status:** personal research prototype. Actual measured results are generated per run in `SUMMARY.md`, `forecast_metrics.csv` and `policy_metrics.csv`. No production-grade performance claim.
 
 **Training:** four global LightGBM boosters (mean and quantiles), frozen chronological final holdout. Saved as UTF-8 text, not pickle. `schema.json` records feature order, category mappings, calibration and iteration counts. `manifest.json` records exact environment, source-code hashes, data SHA256, dates and config.
 
@@ -8,7 +8,7 @@
 
 **Outputs:** nonnegative mean/median, sorted interval bounds for cumulative demand, simulated target inventories, capacity-constrained order quantities and a protection-demand exceedance proxy. The proxy is not a validated probability of an actual stockout with intermediate receipts.
 
-**Appropriate:** reproducible demand forecasting experiments; demonstrating how uncertainty affects reorder policies; interview discussion grounded in measured evidence.
+**Appropriate:** reproducible demand forecasting experiments; demonstrating how uncertainty affects reorder policies; analysis of measured cost and service trade-offs.
 
 **Inappropriate:** autonomous live procurement; petroleum physical planning; use with unreviewed costs, censored demand or materially shifted lead times.
 

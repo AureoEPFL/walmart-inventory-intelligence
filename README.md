@@ -1,88 +1,56 @@
 # Walmart Inventory Intelligence
 
-**Question de recherche : comment réduire les ruptures sans surstocker lorsque la demande et les délais fournisseurs sont incertains ?**
+**A personal research project by Aurélien Laissy.**
 
-Cas d'étude indépendant sur des ventes historiques Walmart. Le responsable approvisionnement doit décider chaque semaine combien commander : trop peu entraîne des ventes perdues, trop immobilise du stock. Nous testons si prévoir une distribution de demande, plutôt qu'une simple moyenne, améliore cet arbitrage.
+## Research question
 
-**Comprendre les données :** M5 est le nom du concours de prévision qui a diffusé ces historiques Walmart. Une série représente les quantités vendues chaque jour pour un produit dans un magasin. Les produits portent des identifiants anonymisés, pas des noms commerciaux. Notre essai utilise 64 références du magasin californien anonymisé `CA_1`, avec 1 941 jours d'historique disponibles. Le test final couvre le 29 février au 22 mai 2016. Les ventes sont observées ; les stocks, délais fournisseurs et coûts sont des scénarios simulés. Le modèle ne connaît donc pas les véritables ruptures historiques de Walmart.
+**Can probabilistic demand forecasts reduce stockouts without carrying excessive inventory when supplier lead times are uncertain?**
 
-**Résultat du premier essai :** comparé à une politique saisonnière avec stock de sécurité, le ML avec sécurité réduit le coût simulé de **6,7 %** et les unités non servies de **27,8 %**, pour un taux de service en unités passant de **92,15 % à 94,34 %**. Comparaison sur 84 jours et 20 tirages de délais ; résultat conditionnel aux hypothèses, pas une économie réalisée chez Walmart.
+I developed this project to study the connection between forecast quality and replenishment decisions. A point forecast estimates expected sales, but ordering decisions also depend on uncertainty, delivery delays, storage capacity and the cost of a lost sale. My analysis compares whether using that uncertainty improves the balance between service and inventory-related costs.
 
-**Predict demand. Understand stockout exposure. Decide when and how much to order.**
+## Walmart sales data
 
-A reproducible ML and operations research portfolio project using real M5 retail sales. Four trainable LightGBM models forecast the mean and demand quantiles over replenishment horizons. A discrete-time inventory simulator compares four ordering policies under variable supplier delays, capacity constraints and lost sales.
+The study uses historical Walmart retail sales released for the **M5 forecasting competition**. Each series records the daily quantity sold for one anonymised product in one store. Product categories include food, household goods and hobbies; commercial product names are not provided.
 
-This is a research prototype with an executable evaluation protocol, not a production-certified system. Retail sales are not diesel demand; inventory, delays and costs are explicitly simulated.
+The completed experiment covers **64 product series from the California store CA_1**, with 1,941 historical days available. The final holdout runs from **29 February to 22 May 2016**. Observed sales are used as a demand proxy. Actual inventory, unfulfilled customer demand, supplier delays and operating costs are not available in these data, so those elements are modelled as explicit assumptions.
 
-## Run locally
+## Work completed
 
-Python 3.11 or 3.12 recommended. From this directory on Windows:
+- Trained four LightGBM models: expected cumulative demand and the 10th, 50th and 90th percentiles over replenishment horizons.
+- Separated training, tuning, interval calibration and final evaluation chronologically, excluding targets that cross split boundaries.
+- Built a daily inventory simulator with outstanding orders, variable lead times, storage limits, case-pack constraints and lost sales.
+- Compared four replenishment policies using the same historical sales and paired supplier-delay draws.
+- Produced an interactive analysis report, item-level order recommendations and cost-sensitivity analysis.
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe scripts/download_m5.py --commit 72b8e7fd3b565b3c538adcb1d1a05117d8562d7e
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m inventory_intelligence.cli --config configs/local.json --output runs/my-first-run
-Start-Process runs/my-first-run/report.html
-```
+## Results
 
-On Linux/macOS use `.venv/bin/python`. Each run requires a new output directory, preventing accidental overwrites. No API key is needed for the public Nixtla mirror. `requirements-lock.txt` records the environment used for the first experiment.
+Results below are averaged over **20 lead-time simulations on the 84-day holdout**. Costs are scenario costs, not observed Walmart expenses.
 
-## What you get
+| Replenishment policy | Mean simulated cost | Unit fill rate |
+|---|---:|---:|
+| Seasonal mean | $7,344.18 | 81.95% |
+| Seasonal with safety stock | $5,403.47 | 92.15% |
+| ML mean | $6,787.24 | 84.00% |
+| ML with safety stock | $5,039.95 | 94.34% |
 
-- An offline interactive HTML report: cost/service comparison, interval coverage, forecast error, stock trajectory, SKU selector and shortage-cost sensitivity.
-- Mean and 10th/50th/90th percentile LightGBM models, saved as portable text, reloadable without retraining.
-- A chronological train / tuning / calibration / test protocol, with targets purged at split boundaries.
-- Seasonal mean and seasonal uncertainty baselines alongside ML policies.
-- Paired Monte Carlo simulations: all policies face the same historical sales and supplier-delay draws.
-- CSV recommendations and metrics; Parquet forecasts and simulation outcomes; configuration, data fingerprints, code fingerprints and model metadata.
-- Tests for future-data leakage, physical stock conservation, capacity, pipeline accounting and model serialization; GitHub Actions runs tests without downloading M5.
+Relative to the seasonal safety-stock policy, ML with safety stock produced **6.7% lower simulated costs** and **27.8% fewer unserved units**, improving service by **2.18 percentage points**.
 
-`configs/local.json`: 64 deterministically sampled CA_1 series, 84-day final test, 20 delay simulations. `configs/kaggle.json`: 512 series, 100 simulations. Neither is a full M5 competition benchmark.
+The operational finding is that **the preferred policy depends on the cost of a shortage**. At a $5 penalty per unserved unit, the ML safety-stock policy has the lowest mean cost. At $2, the ML mean policy has the lowest point estimate, although the difference is small. This sensitivity revalues fixed policies; it does not reoptimise them.
 
-## Train on Kaggle
+At a 12-day horizon, the nominal 80% ML prediction interval covered **82.5%** of observations, versus **67.6%** for the seasonal interval. Better coverage comes with wider intervals and potentially more inventory.
 
-Open `notebooks/kaggle_training.ipynb`. Upload a source archive made with `python scripts/package_source.py` as a private Kaggle dataset, attach it to a notebook, and enable Internet for installing dependencies/downloading the mirror. CPU is sufficient; no paid GPU required. Alternatively attach official M5 evaluation sales and calendar files and set `DATA` in the notebook. The notebook copies source into `/kaggle/working`, trains the larger configuration, and bundles results for download. Read the data-source terms before using or redistributing data.
+## Interpretation and limits
 
-## The operational decision
+These are retrospective results from one store and one held-out period, not realised savings or work commissioned by Walmart. Historical stockouts may censor observed sales. The simulation uses assumed starting stocks, capacities, costs and lead-time probabilities. Its approximate demand-distribution tails and time-dependent calibration do not provide guaranteed future stockout probabilities.
 
-Every seven days: estimate demand during **supplier lead time + time until the next review**, subtract stock on hand and outstanding orders, round to the case pack, and cap by available capacity. Comparing mean-based and uncertainty-aware policies exposes the cost of carrying safety stock versus losing sales.
+The next research steps are evaluation across additional stores and periods, and comparison of policies at matched service levels. The larger Kaggle configuration is available in the code but was not used for the reported results.
 
-The initial recommendation CSV uses hypothetical inventory. To use your own stock snapshot, follow `docs/OPERATIONS.md`. The project compares policies; it does not claim a globally optimal ordering solution. The approximate demand-distribution tails and lead-time distribution are explicit assumptions.
+## Research record
 
-## Read before presenting
+- [Methodology](docs/METHODOLOGY.md)
+- [Results discussion, French](docs/INSIGHTS_FR.md)
+- [Measured metrics and experiment manifest](docs/results)
+- [Data description](docs/DATA_CARD.md) and [model specification](docs/MODEL_CARD.md)
+- [Operational decision logic](docs/OPERATIONS.md)
 
-- [Measured results and interview insights (French)](docs/INSIGHTS_FR.md), with aggregate evidence in `docs/results`.
-- [Methodology](docs/METHODOLOGY.md): temporal splits, quantile calibration, simulation assumptions and limitations.
-- [Model card](docs/MODEL_CARD.md) and [data card](docs/DATA_CARD.md).
-- [Operational walkthrough](docs/OPERATIONS.md): what a planner actually decides.
-- Each completed run contains `SUMMARY.md` with measured results. Never substitute simulated savings for real operational savings.
-
-## Repository layout
-
-```text
-src/inventory_intelligence/  data, features, training, evaluation, simulation, report
-configs/                    small local and larger Kaggle experiments
-notebooks/                  executable Kaggle workflow
-scripts/                    download, inference and source packaging
-tests/                      invariants and model persistence
-docs/                       methodology, model/data cards, operational guide
-data/                       ignored: original data and provenance manifest
-runs/                       ignored: models, metrics and interactive reports
-```
-
-## Publish your own GitHub repository
-
-Create an empty GitHub repository, then from this folder:
-
-```sh
-git init -b main
-git add .
-git diff --cached --stat
-git commit -m "Build probabilistic demand and replenishment research pipeline"
-git remote add origin <YOUR_REPOSITORY_URL>
-git push -u origin main
-```
-
-Raw data, local environments and run artifacts are excluded. Review staged files before pushing. Code is MIT; third-party data is not relicensed by this repository.
+**Implementation:** Python, LightGBM, NumPy, pandas and Plotly. Ten automated tests cover temporal leakage, inventory conservation, pipeline accounting and model persistence. Training code, local/Kaggle configurations and the analysis notebook are included. Raw data, local environments and trained run artifacts are excluded from this repository. Technical execution notes are in [docs/TECHNICAL_NOTES.md](docs/TECHNICAL_NOTES.md).
