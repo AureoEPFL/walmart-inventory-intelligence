@@ -22,7 +22,10 @@ The completed experiment covers **64 product series from the California store CA
 - Compared four replenishment policies using the same historical sales and paired supplier-delay draws.
 - Produced an interactive analysis report, item-level order recommendations and cost-sensitivity analysis.
 
-## Results
+## Results at a glance
+
+![Measured inventory cost and unit fill rate for four policies](docs/assets/cost-and-service.png)
+
 
 Results below are averaged over **20 lead-time simulations on the 84-day holdout**. Costs are scenario costs, not observed Walmart expenses.
 
@@ -38,6 +41,35 @@ Relative to the seasonal safety-stock policy, ML with safety stock produced **6.
 The operational finding is that **the preferred policy depends on the cost of a shortage**. At a $5 penalty per unserved unit, the ML safety-stock policy has the lowest mean cost. At $2, the ML mean policy has the lowest point estimate, although the difference is small. This sensitivity revalues fixed policies; it does not reoptimise them.
 
 At a 12-day horizon, the nominal 80% ML prediction interval covered **82.5%** of observations, versus **67.6%** for the seasonal interval. Better coverage comes with wider intervals and potentially more inventory.
+
+## What the model predicts
+
+![12-day cumulative demand forecast and observed sales](docs/assets/forecast-example.png)
+
+The line is the predicted median and the shaded band is the 10th–90th percentile interval. This is the alphabetically first sampled product, not a best-case selection. Its demand increase exposes a limitation: a model driven by past sales can react late when demand changes sharply.
+
+![Empirical coverage of nominal 80 percent demand intervals](docs/assets/interval-coverage.png)
+
+Coverage is evaluated across the held-out series and origins. It complements the single-product example: uncertainty quality must be checked across horizons, not inferred from one attractive forecast plot.
+
+## Training and decision architecture
+
+```mermaid
+flowchart TD
+    A[Walmart daily sales + calendar] --> B[Past-only lag and rolling features]
+    B --> C[Chronological training and tuning]
+    C --> D[Select iterations, then refit on train + tune]
+    D --> E[Four LightGBM models: mean, q10, q50, q90]
+    E --> F[Separate 84-day interval calibration]
+    F --> G[Frozen models: 84-day rolling holdout]
+    G --> H[Cumulative demand over lead time + review period]
+    H --> I[Inventory policy: target minus on-hand and pipeline]
+    I --> J[Capacity and case-pack constraints]
+    J --> K[Paired lead-time simulations]
+    K --> L[Cost, service, shortages and sensitivity analysis]
+```
+
+Training starts in October 2013; tuning starts on 5 October 2015, calibration on 7 December 2015 and final testing on 29 February 2016. Targets crossing split boundaries are excluded. Models are frozen during the final test, while inputs incorporate newly observed past sales. Charts come from the committed metrics and an exported holdout forecast; `scripts/render_figures.py` renders the figures with Matplotlib.
 
 ## Interpretation and limits
 
