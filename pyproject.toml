@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inventory-intelligence"
+version = "0.1.0"
+description = "Probabilistic demand forecasting and inventory policy evaluation on M5"
+requires-python = ">=3.11"
+dependencies = ["numpy==2.2.6", "pandas==2.2.3", "scipy==1.15.3", "scikit-learn==1.6.1", "lightgbm==4.6.0", "pyarrow==19.0.1", "plotly==6.0.1"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5"]
+
+[project.scripts]
+inventory-lab = "inventory_intelligence.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

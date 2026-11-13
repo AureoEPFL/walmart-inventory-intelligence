@@ -1,0 +1,94 @@
+{
+  "created_utc": "2026-11-13T12:58:25.974854+00:00",
+  "n_series": 64,
+  "n_days": 1941,
+  "config": {
+    "seed": 42,
+    "store": "CA_1",
+    "n_series": 64,
+    "history_days": 730,
+    "horizons": [
+      7,
+      9,
+      12,
+      16,
+      21
+    ],
+    "train_stride": 7,
+    "tune_days": 63,
+    "calibration_days": 84,
+    "test_days": 84,
+    "n_estimators": 350,
+    "learning_rate": 0.04,
+    "num_leaves": 31,
+    "min_child_samples": 60,
+    "threads": 4,
+    "review_days": 7,
+    "lead_days": [
+      2,
+      5,
+      9
+    ],
+    "lead_probabilities": [
+      0.25,
+      0.5,
+      0.25
+    ],
+    "risk_quantile": 0.9,
+    "replications": 20,
+    "holding_cost": 0.03,
+    "shortage_cost": 5.0,
+    "order_cost": 2.0,
+    "capacity_days": 42,
+    "initial_cover_days": 14,
+    "case_pack": 1
+  },
+  "splits": {
+    "train_start": 980,
+    "tune_start": 1710,
+    "cal_start": 1773,
+    "test_start": 1857,
+    "end": 1941
+  },
+  "split_dates": {
+    "train_start": "2013-10-05",
+    "tune_start": "2015-10-05",
+    "cal_start": "2015-12-07",
+    "test_start": "2016-02-29",
+    "end": "2016-05-22"
+  },
+  "data_sha256": "c21a519596680feb86f27a9e62f6c8b583f8be60c2c195f080ae8ca2990af2b7",
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "lightgbm": "4.6.0",
+    "scipy": "1.15.3"
+  },
+  "code_sha256": {
+    "cli.py": "2ca62eac2c74b0e0c43200d988396c1da83b04ac3fd2364259449583e0e5116c",
+    "data.py": "28ce9bd1852fede351429a87ea338560745ff5e2fae378af1ecd0c3a958cb21c",
+    "evaluation.py": "27bf37925ce9475ea5204f34806f932642b75977408571aafad23bacc9aee5fe",
+    "features.py": "33f83a928c9e11a9d8ded3b9de205ada1f6c223d23d5579135fe0092a3962e1c",
+    "inventory.py": "05530d52073070f4fbf9706e10945a5d139b8b5e0a2613005c70c3a3a63326e7",
+    "model.py": "1de979eeb188d0f2cd8c35c449a1d9c176ffb620149394395aa79c230d9d9904",
+    "report.py": "ffd5a5d0060c73050e2b0290dfdb6eb415abd1f822bf4a3bf030fc970bb35837",
+    "__init__.py": "ffa24fd4157dd961d652f43a1af44769991d45f072346f547ef1dacb90c71e74"
+  },
+  "best_iterations": {
+    "mean": 144,
+    "q10": 70,
+    "q50": 159,
+    "q90": 97
+  },
+  "interval_expansion_normalized": {
+    "7": 0.0,
+    "9": 0.0,
+    "12": 0.0,
+    "16": 0.0012597465751308329,
+    "21": 0.20173128418618513
+  },
+  "calibration_note": "Time dependence and overlapping windows violate exchangeability; empirical coverage is evaluated, no finite-sample deployment guarantee."
+}

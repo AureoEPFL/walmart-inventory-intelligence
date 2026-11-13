@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.env
+kaggle.json
+data/
+runs/
+dist/
+build/
+*.zip
+*.pkl
+*.joblib
+.ipynb_checkpoints/
+
+!configs/kaggle.json

@@ -1,0 +1,17 @@
+shortage_cost_per_unit,policy,mean_cost
+2,ml_mean,4056.9435000000003
+2,ml_risk,4073.6515
+2,seasonal_mean,4265.284500000001
+2,seasonal_risk,4064.5649999999987
+5,ml_mean,6787.2435
+5,ml_risk,5039.9515
+5,seasonal_mean,7344.1845
+5,seasonal_risk,5403.464999999998
+10,ml_mean,11337.7435
+10,ml_risk,6650.4515
+10,seasonal_mean,12475.6845
+10,seasonal_risk,7634.964999999999
+20,ml_mean,20438.7435
+20,ml_risk,9871.4515
+20,seasonal_mean,22738.684500000003
+20,seasonal_risk,12097.965
